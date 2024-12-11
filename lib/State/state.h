@@ -17,11 +17,14 @@
 #ifndef State_h
 #define State_h
 
+/*!
+    @brief the possible states of the Embedded Sentry.
+*/
 enum State
 {
-    IDLE,
-    RECORDING,
-    PROCESSING
+    IDLE,  /*!< waiting for user to start a new recording */
+    RECORDING,  /*!< recording a sequence */
+    PROCESSING  /*!< precessing the sequence */
 };
 
 #endif
