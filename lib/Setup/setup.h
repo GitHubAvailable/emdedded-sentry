@@ -30,4 +30,10 @@ void setup_gpio();
 */
 void setup_gyro();
 
+/*!
+    @brief setup LCD for screen display.
+    @note should be called with IRQ disabled.
+*/
+void setup_lcd();
+
 #endif

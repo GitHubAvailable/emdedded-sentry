@@ -29,3 +29,13 @@ void setup_gyro()
 {
     
 }
+
+void setup_lcd()
+{
+    lcd.Init();
+
+    // Setup default color configuration.
+    lcd.Clear(DEFAULT_BG);
+    lcd.SetBackColor(TEXT_DEFAULT_BG);
+    lcd.SetTextColor(TEXT_DEFAULT_COLOR);
+}
