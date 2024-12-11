@@ -17,6 +17,7 @@
 #define Hardware_h
 
 #include <mbed.h>
+#include <LCD_DISCO_F429ZI.h>
 
 // GPIO macros.
 #define BUTTON PA_0  // user button
@@ -32,6 +33,11 @@
 #define SCK PF_7
 #define GYRO_SS PC_1  // the SS line of the gyroscope
 
+// LCD default color settings.
+#define DEFAULT_BG LCD_COLOR_BLACK
+#define TEXT_DEFAULT_BG LCD_COLOR_BLACK  // backgroud color of texts
+#define TEXT_DEFAULT_COLOR LCD_COLOR_GREEN
+
 // The control button of the application.
 InterruptIn button(BUTTON, PullDown);
 
@@ -43,5 +49,8 @@ DigitalOut red_led(RED_LED);
 
 // The SPI master to communicate with I3G4250D gyroscope.
 SPI gyro_spi(MISO, MOSI, SCK, GYRO_SS, use_gpio_ssel);
+
+// The ILI9341 LCD screen.
+LCD_DISCO_F429ZI lcd;
 
 #endif
