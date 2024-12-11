@@ -23,9 +23,27 @@
 void start_view();
 
 /*!
-    @brief display idle UI
+    @brief a view that shows the device is ready to accept sequence.
 */
-void idle_view();
+void device_ready_view();
+
+/*!
+    @brief a view that shows an new key was stored successfully and the
+        device is ready.
+*/
+void key_stored_view();
+
+/*!
+    @brief a view that shows the previous input matched the key and the
+        device is ready.
+*/
+void seq_match_view();
+
+/*!
+    @brief a view that shows the previous input did not match the key
+        and the device is ready.
+*/
+void seq_mismatch_view();
 
 void recording_view();
 
