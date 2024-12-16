@@ -14,13 +14,49 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "hardware.h"
 #include "interrupt.h"
 
-void start_recording()
+// void start_recording()
+// {
+//     // Disable button interrupt to remove bouncing.
+//     button.disable_irq();
+//     flags.set(START_RECORDING);
+//     button.enable_irq();
+// }
+
+EventFlags flags;
+
+void com_finish(int event)
 {
-    // Disable button interrupt to remove bouncing.
-    button.disable_irq();
-    flags.set(START_RECORDING);
-    button.enable_irq();
+    flags.set(GYRO_SPI_COM_FLAG);
+}
+
+void data_ready()
+{
+    flags.set(GYRO_DATA_READY_FLAG);
+}
+
+void read_gyro()
+{
+    flags.set(READ_DATA_FLAG);
+}
+
+void set_key_started()
+{
+    flags.set(START_SET_KEY_FLAG);
+}
+
+void test_key_started()
+{
+    flags.set(START_TEST_FLAG);
+}
+
+void recording_cancelled()
+{
+    flags.set(RECORDING_CANCELLED_FLAG);
+}
+
+void recording_finished()
+{
+    flags.set(RECORDING_FINISHED_FLAG);
 }
