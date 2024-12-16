@@ -57,7 +57,7 @@ void device_ready_view(const PrevStatus &prev)
     lcd.DisplayStringAt(0, LINE(3), (uint8_t *) APP_TITLE, CENTER_MODE);
 
     uint8_t *prev_status_msg;
-
+    printf( "PrevStatus is: %d -----", prev);
     switch (prev)
     {
         case START:
@@ -89,12 +89,12 @@ void device_ready_view(const PrevStatus &prev)
         red_led.write(OFF);
     }
     if (prev != START)  // note that prev_status_msg is set if get here
-        lcd.DisplayStringAt(0, LINE(5), prev_status_msg, CENTER_MODE);
+        lcd.DisplayStringAt(0, LINE(7), prev_status_msg, CENTER_MODE);
 
     // Use LEFT_MODE since max text width cannot be specified.
-    lcd.DisplayStringAt(60, LINE(17),
+    lcd.DisplayStringAt(37, LINE(17),
         (uint8_t *) RESET_BUTTON, LEFT_MODE);
-    lcd.DisplayStringAt(180, LINE(17),
+    lcd.DisplayStringAt(140, LINE(17),
         (uint8_t *) UNLOCK_BUTTON, LEFT_MODE);
     draw_buttons(idle_default_bts, IDLE_DEFAULT_LEN);
 }
@@ -107,15 +107,17 @@ void recording_view(bool is_test)
     lcd.DisplayStringAt(0, LINE(7), (uint8_t *) RECORDING_HINT, CENTER_MODE);
 
     // Place button labels.
-    lcd.DisplayStringAt(120, LINE(18), (uint8_t *) SUBMIT_BUTTON, CENTER_MODE);
+    lcd.DisplayStringAt(140, LINE(17), (uint8_t *) SUBMIT_BUTTON, LEFT_MODE);
     draw_buttons(recording_bts, RECORDING_LEN);
 
     if (is_test)
     {
+        green_led.write(OFF);
         red_led.write(ON);
         return;
     }
     green_led.write(ON);
+    red_led.write(OFF);
 }
 
 // void processing_view()
