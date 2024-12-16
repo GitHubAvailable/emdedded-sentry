@@ -24,14 +24,14 @@ const uint8_t DEVICE_LOCKED[] = "Device Status: Locked";
 const uint8_t DEVICE_UNLOCKED[] = "Device Status: Unlocked";
 const uint8_t START_RECORD_HINT[] = "Click Button to Start Recording";
 
-const uint8_t RECORDING[] = "Recording started.";
+const uint8_t RECORDING[] = "Recording Started";
 const uint8_t SET_KEY_STATUS[] = "Current Mode: Setting Key";
 const uint8_t TEST_STATUS[] = "Current Mode: Unlocking";
-const uint8_t RECORDING_HINT[] = "Please finish the sequence in 10s";
+const uint8_t RECORDING_HINT[] = "Set Key in 10s";
 
 const uint8_t KEY_SAVED[] = "Key Saved";
-const uint8_t INCORRECT_KEY[] = "Incorrect Gesture! Please try again!";
-const uint8_t CORRECT_KEY[] = "Correct Gesture! Device unlocked!";
+const uint8_t INCORRECT_KEY[] = "Incorrect!";
+const uint8_t CORRECT_KEY[] = "Correct! Unlocked!";
 
 const uint8_t RESET_BUTTON[] = "Reset";
 const uint8_t UNLOCK_BUTTON[] = "Unlock";
