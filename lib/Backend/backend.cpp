@@ -71,7 +71,7 @@ float cmp_seqs(const float *const seq1, const uint16_t len1,
     if ((!len1) || (!len2))  // one sequence is empty
         return -1.0f;
     
-    float costs[len1][len2];
+    float costs[BUFFER_LEN][BUFFER_LEN];
     costs[0][0] = abs(seq1[0] - seq2[0]);
 
     // Setup edge entries.

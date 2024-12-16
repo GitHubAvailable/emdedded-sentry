@@ -21,7 +21,7 @@
 #include "dataloader.h"
 #include "screenbutton.h"
 
-#define GYRO_READ_PERIOD 4ms  // Issue a read every 4ms
+#define GYRO_READ_PERIOD 50ms  // Issue a read every 100ms
 #define MAX_AXIS_DISTANCE 0.1
 
 /*!
@@ -56,5 +56,8 @@ void end_periodic_read();
     @returns bool - if the two sequence match each other
 */
 bool test_match(const DataBuffer &, const DataBuffer &);
+
+float cmp_seqs(const float *const seq1, const uint16_t len1,
+    const float *const seq2, const uint16_t len2);
 
 #endif
