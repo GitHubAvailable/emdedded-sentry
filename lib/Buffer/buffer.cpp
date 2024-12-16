@@ -18,22 +18,24 @@
 
 void DataBuffer::append_vector(float x, float y, float z)
 {
+    if (index >= BUFFER_LEN)  // reset counter if buffer is full.
+        index = 0;
+
     ang_v[X_AXIS][index] = x;
     ang_v[Y_AXIS][index] = y;
     ang_v[Z_AXIS][index] = z;
-    
-    if (++index >= BUFFER_LEN)  // reset counter if buffer is full.
-        index = 0;
+    index++;
     return;
 }
 
 void DataBuffer::append_vector(const float *buf)
 {
+    if (index >= BUFFER_LEN)  // reset counter if buffer is full.
+        index = 0;
+    
     for (uint8_t axis = 0; axis < TOTAL_DIM; axis++)
         ang_v[axis][index] = buf[axis];
-    
-    if (++index >= BUFFER_LEN)  // reset counter if buffer is full.
-        index = 0;
+    index++;
     return;
 }
 
@@ -51,8 +53,20 @@ DataBuffer &DataBuffer::operator=(const DataBuffer &buffer)
 
     for (uint8_t axis = 0; axis < TOTAL_DIM; axis++)
     {
-        for (uint j = 0; j < BUFFER_LEN; j++)
+        for (uint16_t j = 0; j < BUFFER_LEN; j++)
             ang_v[axis][j] = buffer.ang_v[axis][j];
     }
-    return (DataBuffer &) *this;
+    return *this;
 }
+
+// void DataBuffer::copy_arr()
+// {
+//     index = buffer.index;
+//     printf("Executing");
+
+//     for (uint8_t axis = 0; axis < TOTAL_DIM; axis++)
+//     {
+//         for (uint16_t j = 0; j < BUFFER_LEN; j++)
+//             ang_v[axis][j] = buffer.ang_v[axis][j];
+//     }
+// }
