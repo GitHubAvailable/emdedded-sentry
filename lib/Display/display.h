@@ -16,6 +16,13 @@
 #ifndef Display_h
 #define Display_h
 
+#include "prevstatus.h"
+
+/*!
+    @brief Turn off all leds on the board.
+*/
+void clear_led();
+
 /*!
     @brief set initial UI of the device
     @details turn on the green LED
@@ -23,28 +30,35 @@
 void start_view();
 
 /*!
-    @brief a view that shows the device is ready to accept sequence.
+    @brief A view that shows the device is ready to accept sequence.
+    @param key_stored A bool indicating whether the answer key
+        was stored on the device, the user is required to store
+        a key sequence before testing.
 */
-void device_ready_view();
+void device_ready_view(const PrevStatus &prev);
 
 /*!
-    @brief a view that shows an new key was stored successfully and the
-        device is ready.
+    @brief A view that shows the device is currently recording a sequence.
+    @param mode A bool that shows if the current sequence is a test sequence.
 */
-void key_stored_view();
+void recording_view(bool is_test);  // could add time later.
 
-/*!
-    @brief a view that shows the previous input matched the key and the
-        device is ready.
-*/
-void seq_match_view();
+// /*!
+//     @brief a view that shows an new key was stored successfully and the
+//         device is ready.
+// */
+// void key_stored_view();
 
-/*!
-    @brief a view that shows the previous input did not match the key
-        and the device is ready.
-*/
-void seq_mismatch_view();
+// /*!
+//     @brief a view that shows the previous input matched the key and the
+//         device is ready.
+// */
+// void seq_match_view();
 
-void recording_view();
+// /*!
+//     @brief a view that shows the previous input did not match the key
+//         and the device is ready.
+// */
+// void seq_mismatch_view();
 
 #endif
