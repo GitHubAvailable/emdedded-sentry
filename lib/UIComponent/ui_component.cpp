@@ -21,7 +21,7 @@ ScreenButton reset_key = {15, 15, 95, DEFAULT_HEIGHT, set_key_started};
 ScreenButton test = {125, 15, 95, DEFAULT_HEIGHT, test_key_started};
 
 // ScreenButton cancel = {15, 15, 95, DEFAULT_HEIGHT, recording_cancelled};
-ScreenButton finish = {15, 15, 205, DEFAULT_HEIGHT, recording_finished};
+ScreenButton finish = {125, 15, 95, DEFAULT_HEIGHT, recording_finished};
 
 
 // The list of screen buttons used for each view.
