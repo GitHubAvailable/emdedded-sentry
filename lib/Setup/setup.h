@@ -25,12 +25,6 @@
 void setup_gpio();
 
 /*!
-    @brief set default configuration of I3G4250D gyroscope
-    @note should be called with IRQ disabled
-*/
-void setup_gyro();
-
-/*!
     @brief setup LCD for screen display.
     @note should be called with IRQ disabled.
 */
