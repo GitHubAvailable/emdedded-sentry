@@ -28,7 +28,7 @@ Dataloader *target_loader;
 */
 void loader_periodic_read()
 {
-    while (target_loader->is_buf_full())
+    while (!target_loader->is_buf_full())
     {
         flags.wait_all(READ_DATA_FLAG);
         target_loader->load_data();
@@ -51,6 +51,7 @@ void detect_touch()
 int main()
 {
     // Starting configuration.
+    // Disable interrupts causes error for lcd.
     // __disable_irq(); // disable global interrupts
 
     // Setup hardwares.
@@ -81,14 +82,26 @@ int main()
     prev_status = START;
     bool is_test;  /*!< whether the current recording is for testing */
 
+    // Setup Dynamic Time Warping (DTW) variables and buffers.
+    /*
+        These variables were setup to fix a series of MbedOS errors
+        caused by calling the original functions where they
+        were originally located.
+    */
+    float max_dist = 0.0f;  /*!< max distance between input and key */
+    float costs[2][BUFFER_LEN];  /*!< DTW cost matrix */
+    /*!< pointer for accessing data of specific axis */
+    float *key_ptr, *input_ptr;
+
     // Initialize gyro_read parameter.
     target_loader = &loader;
     // __enable_irq();  // enable global interrupts
 
     while (1)
     {
+        printf("--- Idle State --- \n");
         // Set threads for screen touch detection and gyro reading.
-        Thread bt_detect, gyro_read;
+        Thread idle_detect, record_detect, gyro_read;
 
         /* -------- IDLE State -------- */
         device_ready_view(prev_status);
@@ -106,7 +119,7 @@ int main()
             group_len = IDLE_DEFAULT_LEN;
         }
 
-        bt_detect.start(detect_touch);  // start detecting buttons
+        idle_detect.start(detect_touch);  // start detecting buttons
         flags.wait_any(START_SET_KEY_FLAG | START_TEST_FLAG,
             WAIT_FOREVER, false);
         
@@ -120,12 +133,24 @@ int main()
         loader.reset();  // reset loader data and clear buffer
         state = RECORDING;
 
+        printf("idle ended, cur State is %d   ", state);
+
+        thread_sleep_for(500);  // avoid detecting button on the next view
+
         /* -------- Working States -------- */
         switch (state)
         {
             case RECORDING:
                 recording_view(is_test);
-                __disable_irq();
+                printf("---- Recording Started -----");
+
+                if ((flags.get() & RECORDING_FINISHED_FLAG) != 0)
+                    printf("****Finished flag Set!!!!!!!****");
+                // __disable_irq();
+                // Set button to be monitored.
+                cur_bt_group = recording_bts;
+                group_len = RECORDING_LEN;
+
                 gyro->enable();  // enable gyroscope measuring
 
                 // Set button group to be monitored.
@@ -133,13 +158,13 @@ int main()
                 group_len = RECORDING_LEN;
 
                 set_periodic_read();  // start measuring signal
-                __enable_irq();
+                // // __enable_irq();
 
                 // Start reading data.
                 gyro_read.start(loader_periodic_read);
 
-                // Start detecting thread.
-                bt_detect.start(detect_touch);
+                // // Start detecting thread.
+                record_detect.start(detect_touch);
 
                 flags.wait_any(RECORDING_CANCELLED_FLAG
                     | RECORDING_FINISHED_FLAG, WAIT_FOREVER, false);
@@ -148,39 +173,120 @@ int main()
                 // Stop threads if needed.
                 if (gyro_read.get_state() == rtos::Thread::State::Running)
                     gyro_read.terminate();
-                if (bt_detect.get_state() == rtos::Thread::State::Running)
-                    bt_detect.terminate();
+                if (record_detect.get_state() == rtos::Thread::State::Running)
+                    record_detect.terminate();
                 
                 // Stop hardwares.
                 end_periodic_read();  // end measuring signal
                 gyro->disable();
 
-                if (flags.get() | RECORDING_CANCELLED_FLAG)
+                if ((flags.get() & RECORDING_CANCELLED_FLAG) != 0)
                 {
+                    flags.clear(RECORDING_CANCELLED_FLAG);
+                    printf("Recording Cancelled !");
                     state = IDLE;
                     break;
                 }
+                flags.clear(RECORDING_FINISHED_FLAG);
+                printf("--- Recording Ended --- \n");
                 state = PROCESSING;
             
             case PROCESSING:
-                __disable_irq();  // disable irq for data processing
+                // __disable_irq();  // disable irq for data processing
                 state = IDLE;
                 if (!is_test)
                 {
-                    key_buf = input_buf;  // store the new key
+                    // Store the new key.
+                    key_buf.index = input_buf.index;
+
+                    for (uint8_t axis = 0; axis < TOTAL_DIM; axis++)
+                    {
+                        for (uint16_t j = 0; j < BUFFER_LEN; j++)
+                            key_buf.ang_v[axis][j] = input_buf.ang_v[axis][j];
+                    }
+
+                    /*
+                        For unknown reason, call to operator= leads
+                        to MbedOS parameter error.
+                        Even a call to an empty function like
+                        key_buf.copy() that does no operations trigger
+                        the same error.
+                    */
+                    // key_buf = input_buf;
+
                     prev_status = SET_KEY;
-                    __enable_irq();
+                    // __enable_irq();
                     break;
                 }
                 
-                prev_status = test_match(key_buf, input_buf) ?
+                max_dist = 0.0f;
+                for (uint8_t axis = 0; axis < TOTAL_DIM; axis++)
+                {
+                    key_ptr = key_buf.ang_v[axis];
+                    input_ptr = input_buf.ang_v[axis];
+
+                    costs[0][0] = abs(key_buf.ang_v[axis][0]
+                        - input_buf.ang_v[axis][0]);
+
+                    // Setup edge entries. Apply rolling array to save space.
+                    costs[1][0] = costs[0][0];
+                    for (uint16_t c = 1; c < input_buf.index + 1; c++)
+                        costs[0][c] = costs[0][c - 1]
+                            + abs(key_ptr[0] - input_ptr[c]);
+                    
+                    /*
+                        For unknown reasons, the program may stuck at the
+                        the starting view if the following for loop is used.
+                    */
+                    // Evaluate cost matrix.
+                    // for (uint16_t r = 1; r < key_buf.index + 1; r++)
+                    // {
+                    //     // for (uint16_t c = 1; c < input_buf.index + 1; c++)
+                    //     // {
+                    //     //     // Replace % 2 with & 1 to save time.
+                    //     //     costs[r & 1][c] = abs(key_ptr[r] - input_ptr[c])
+                    //     //         + min(
+                    //     //         costs[(r - 1) & 1][c - 1],
+                    //     //         min(costs[(r - 1) & 1][c], costs[r & 1][c - 1]));
+                    //     // }
+                    // }
+                    // max_dist = max(max_dist,
+                    //     costs[(key_buf.index - 1) & 2][input_buf.index - 1]);
+
+                    /*
+                        For unknown reason, call to `cmp_seqs` trigger
+                        MbedOS Fault exception.
+                        The error still remains even after all operations
+                        in the function were removed except a default
+                        return value `0.0f`.
+                        `cmp_seqs` was not public and was added to the
+                        `backend.h` later in an attempt to fix the error
+                        caused by calling `test_match`.
+                    */
+                    max_dist = max(max_dist,
+                        cmp_seqs(key_buf.ang_v[axis], key_buf.index + 1,
+                        input_buf.ang_v[axis], input_buf.index + 1));
+                }
+                prev_status = (max_dist < MAX_AXIS_DISTANCE) ?
                     MATCH : MISMATCH;
-                __enable_irq();
+                
+                /*
+                    For unknown reason, call to `test_match` leads
+                    to MbedOS parameter error.
+                    Removing all operations in `test_match`
+                    while keeping a default return value `false` trigger
+                    the same error.
+                */
+                // prev_status = test_match(key_buf, input_buf) ?
+                //    MATCH : MISMATCH;
+                // __enable_irq();
                 break;
 
             default:
                 break;
         }
+
+        printf("------ Recording and comparison ended! ----- \n");
     }
     
     return 0;
