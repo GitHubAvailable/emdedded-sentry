@@ -19,11 +19,6 @@
 
 #define IS_IN_CLOSED_RANGE(x, l, u) ((x >= l) && (x <= u))
 
-// void reset_device()
-// {
-//     button.rise(&start_recording);
-// }
-
 ScreenButton *wait_buttons(ScreenButton *const *buttons, uint8_t len)
 {
     TS_StateTypeDef ts_state;
@@ -34,13 +29,10 @@ ScreenButton *wait_buttons(ScreenButton *const *buttons, uint8_t len)
 
         if (!ts_state.TouchDetected)
             continue;
-        printf("%u, %u, %u ", ts_state.TouchDetected, ts_state.X, ts_state.Y);
         
         // Check if the touch falls on a button.
         for (uint8_t i = 0; i < len; i++)
         {
-            printf("Button: %u, %u, %u, %u\n", buttons[i]->x_pos, buttons[i]->x_pos + buttons[i]->width,
-                buttons[i]->y_pos, buttons[i]->y_pos + buttons[i]->height);
             if (!IS_IN_CLOSED_RANGE(ts_state.X, buttons[i]->x_pos,
                 buttons[i]->x_pos + buttons[i]->width))
                 continue;
@@ -71,22 +63,28 @@ float cmp_seqs(const float *const seq1, const uint16_t len1,
     if ((!len1) || (!len2))  // one sequence is empty
         return -1.0f;
     
-    float costs[BUFFER_LEN][BUFFER_LEN];
+    float costs[2][BUFFER_LEN];
     costs[0][0] = abs(seq1[0] - seq2[0]);
 
     // Setup edge entries.
-    for (uint16_t r = 1; r < len1; r++)
-        costs[r][0] = costs[r - 1][0] + abs(seq1[r] - seq2[0]);
+    costs[1][0] = costs[0][0] + abs(seq1[1] - seq2[0]);
     for (uint16_t c = 1; c < len2; c++)
         costs[0][c] = costs[0][c - 1] + abs(seq1[0] - seq2[c]);
     
     // Evaluate cost matrix.
     for (uint16_t r = 1; r < len1; r++)
+    {
         for (uint16_t c = 1; c < len2; c++)
-            costs[r][c] = abs(seq1[r] - seq2[c]) + min(costs[r - 1][c - 1],
-                min(costs[r - 1][c], costs[r][c - 1]));
+        {
+            // Replace % 2 with & 1 to save time.
+            costs[r & 1][c] = abs(seq1[r & 1] - seq2[c])
+                + min(costs[(r - 1) & 1][c - 1],
+                    min(costs[(r - 1) & 1][c], costs[r & 1][c - 1])
+                );
+        }
+    }
     
-    return costs[len1 - 1][len2 - 1];
+    return costs[(len1 - 1) & 1][len2 - 1];
 }
 
 bool test_match(const DataBuffer &key1, const DataBuffer &key2)

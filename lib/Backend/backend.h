@@ -33,7 +33,6 @@ void reset_device();
 /*!
     @brief Wait for a button to be touched.
     @param The list of buttons to be detected.
-    @note This function uses polling. And it blocks 
     @returns Pointer the first pressed pressed button in the array.
 */
 ScreenButton *wait_buttons(ScreenButton *const *buttons, uint8_t len);
