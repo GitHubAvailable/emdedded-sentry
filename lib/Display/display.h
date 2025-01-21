@@ -43,22 +43,4 @@ void device_ready_view(const PrevStatus &prev);
 */
 void recording_view(bool is_test);  // could add time later.
 
-// /*!
-//     @brief a view that shows an new key was stored successfully and the
-//         device is ready.
-// */
-// void key_stored_view();
-
-// /*!
-//     @brief a view that shows the previous input matched the key and the
-//         device is ready.
-// */
-// void seq_match_view();
-
-// /*!
-//     @brief a view that shows the previous input did not match the key
-//         and the device is ready.
-// */
-// void seq_mismatch_view();
-
 #endif

@@ -57,7 +57,7 @@ void device_ready_view(const PrevStatus &prev)
     lcd.DisplayStringAt(0, LINE(3), (uint8_t *) APP_TITLE, CENTER_MODE);
 
     uint8_t *prev_status_msg;
-    printf( "PrevStatus is: %d -----", prev);
+
     switch (prev)
     {
         case START:
@@ -107,6 +107,7 @@ void recording_view(bool is_test)
     lcd.DisplayStringAt(0, LINE(7), (uint8_t *) RECORDING_HINT, CENTER_MODE);
 
     // Place button labels.
+    lcd.DisplayStringAt(37, LINE(17), (uint8_t *) CANCEL_BUTTON, LEFT_MODE);
     lcd.DisplayStringAt(140, LINE(17), (uint8_t *) SUBMIT_BUTTON, LEFT_MODE);
     draw_buttons(recording_bts, RECORDING_LEN);
 
@@ -119,8 +120,3 @@ void recording_view(bool is_test)
     green_led.write(ON);
     red_led.write(OFF);
 }
-
-// void processing_view()
-// {
-//     lcd.DisplayStringAt(0, LINE(3), (uint8_t *) )
-// }
