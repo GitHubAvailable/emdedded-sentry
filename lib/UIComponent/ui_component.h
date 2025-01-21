@@ -24,7 +24,7 @@
 // The length of each array defined.
 #define IDLE_NO_KEY_LEN 1
 #define IDLE_DEFAULT_LEN 2
-#define RECORDING_LEN 1
+#define RECORDING_LEN 2
 
 // Definition of buttons.
 // Idle start view with no key stored.
@@ -35,7 +35,7 @@ extern ScreenButton reset_key;
 extern ScreenButton test;
 
 // Recording view.
-// extern ScreenButton cancel;
+extern ScreenButton cancel;
 extern ScreenButton finish;
 
 
