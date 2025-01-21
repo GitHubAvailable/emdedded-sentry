@@ -19,10 +19,6 @@
 
 #define SCALING_FACTOR (17.5f * 0.0174532925199432957692236907684886f / 1000.0f)
 
-
-// // The control button of the application.
-// InterruptIn button(BUTTON, PullDown);
-
 // The gyroscope data ready interrupt pin.
 InterruptIn data_ready_int(DATA_READY, PullDown);
 

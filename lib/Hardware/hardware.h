@@ -74,9 +74,6 @@
 #define TEXT_DEFAULT_BG LCD_COLOR_BLACK  // backgroud color of texts
 #define TEXT_DEFAULT_COLOR LCD_COLOR_GREEN
 
-// // The control button of the application.
-// InterruptIn button(BUTTON, PullDown);
-
 // The gyroscope data ready interrupt pin.
 extern InterruptIn data_ready_int;
 
