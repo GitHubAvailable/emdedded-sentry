@@ -16,14 +16,6 @@
  */
 #include "interrupt.h"
 
-// void start_recording()
-// {
-//     // Disable button interrupt to remove bouncing.
-//     button.disable_irq();
-//     flags.set(START_RECORDING);
-//     button.enable_irq();
-// }
-
 EventFlags flags;
 
 void com_finish(int event)

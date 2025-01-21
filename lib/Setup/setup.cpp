@@ -20,9 +20,6 @@ void setup_gpio()
 {
     green_led.write(OFF);
     red_led.write(OFF);
-
-    // Signal the sentry to start recording when button pressed.
-    // button.rise(&start_recording);
 }
 
 void setup_lcd()
@@ -31,8 +28,6 @@ void setup_lcd()
     ts.Init(lcd.GetXSize(), lcd.GetYSize());  // enable touch screen
 
     BSP_LCD_SetFont(FONT16);  // set default font size
-
-    // ts.ITConfig(); // should not appear here as may enable interrupts
 
     // Setup default color configuration.
     lcd.Clear(DEFAULT_BG);

@@ -22,7 +22,6 @@
 #include <LCD_DISCO_F429ZI.h>
 #include <TS_DISCO_F429ZI.h>
 
-#define START_RECORDING 1
 #define GYRO_SPI_COM_FLAG 0x2  // SPI communication complete
 #define GYRO_DATA_READY_FLAG 0x4  // Gyro data ready
 #define READ_DATA_FLAG 0x8  // Time to read from gyro
