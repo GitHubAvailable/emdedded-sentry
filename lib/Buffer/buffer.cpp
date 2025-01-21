@@ -58,15 +58,3 @@ DataBuffer &DataBuffer::operator=(const DataBuffer &buffer)
     }
     return *this;
 }
-
-// void DataBuffer::copy_arr()
-// {
-//     index = buffer.index;
-//     printf("Executing");
-
-//     for (uint8_t axis = 0; axis < TOTAL_DIM; axis++)
-//     {
-//         for (uint16_t j = 0; j < BUFFER_LEN; j++)
-//             ang_v[axis][j] = buffer.ang_v[axis][j];
-//     }
-// }

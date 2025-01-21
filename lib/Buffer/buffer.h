@@ -31,7 +31,7 @@
 */
 struct DataBuffer
 {
-    // private:
+    // private:  // fix the MbedOS error
         uint8_t index = 0;  /*!< index of the next element */
         float ang_v[3][BUFFER_LEN];  /*!< xyz-axis angular velocity data */
     
@@ -75,8 +75,6 @@ struct DataBuffer
             @brief Copy the buffer by value.
         */
         DataBuffer &operator=(const DataBuffer &buffer);
-
-        // void copy_arr();
 };
 
 #endif
